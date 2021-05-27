@@ -16,16 +16,16 @@ prepare_src() {
     DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     cd ${BUILD_DIR} && \
-    bash -c "while ! git clone https://github.com/c6supper/osxcross.git --depth=1; do sleep 1; done" && \
-    wget -t 0 https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz
+    bash -c "while ! git clone https://github.com/c6supper/osxcross.git --depth=1; do sleep 1; done"  
 }
 
 build_cross_compiler() {
     cd ${BUILD_DIR}/osxcross && \
+    wget -c -t 0 https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz -O tarballs/MacOSX10.15.sdk.tar.xz && \
     DEBIAN_FRONTEND=noninteractive tools/get_dependencies.sh && \
-    CLANG_VERSION=11.0.0 INSTALLPREFIX=/opt/clang ./build_clang.sh && \
-    UNATTENDED=1 ./build.sh && \
-    GCC_VERSION=10.3.0 ./build_gcc.sh
+    UNATTENDED=1 CLANG_VERSION=12.0.0 JOBS=4 INSTALLPREFIX=/opt/clang ./build_clang.sh && \
+    UNATTENDED=1 JOBS=4 ./build.sh && \
+    UNATTENDED=1 GCC_VERSION=10.3.0 JOBS=4 ./build_gcc.sh
 }
 
 if [ ! -f "$VENUS_INITIALIZED_MARK" ]; then
